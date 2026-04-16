@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Market Dashboard — Live</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        surface: { 900: '#0f1117', 800: '#161922', 700: '#1e2231', 600: '#282d3e' },
+                        accent: { green: '#22c55e', red: '#ef4444', yellow: '#eab308', orange: '#f97316', blue: '#3b82f6', purple: '#a855f7' },
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background: #0f1117; color: #e2e8f0; font-family: 'Inter', system-ui, sans-serif; }
+        table { border-collapse: separate; border-spacing: 0; width: 100%; }
+        th { position: sticky; top: 0; z-index: 10; }
+        .chart-panel { transition: max-height 0.3s ease, opacity 0.3s ease; max-height: 0; opacity: 0; overflow: hidden; }
+        .chart-panel.open { max-height: 1200px; opacity: 1; }
+        .score-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 46px;
+                       padding: 3px 10px; border-radius: 6px; font-weight: 700; font-size: 16px; cursor: help; position: relative; }
+        .setup-badge { display: inline-flex; align-items: center; padding: 3px 12px; border-radius: 6px;
+                       font-weight: 600; font-size: 15px; text-transform: uppercase; letter-spacing: 0.5px; cursor: help; position: relative; }
+        tr.ticker-row { cursor: pointer; transition: background 0.15s; }
+        tr.ticker-row:hover { background: #1e2231 !important; }
+        .cell-val { font-variant-numeric: tabular-nums; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #161922; }
+        ::-webkit-scrollbar-thumb { background: #3b4260; border-radius: 4px; }
+        .tip { position: relative; cursor: help; }
+        .tip .tiptext {
+            visibility: hidden; opacity: 0;
+            position: absolute; z-index: 50;
+            bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%);
+            background: #1e2231; border: 1px solid #3b4260; border-radius: 8px;
+            padding: 10px 14px; font-size: 13px; line-height: 1.6;
+            white-space: nowrap; color: #cbd5e1;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            transition: opacity 0.15s;
+            pointer-events: none;
+        }
+        .tip:hover .tiptext { visibility: visible; opacity: 1; }
+        .tip-down .tiptext { bottom: auto !important; top: calc(100% + 8px); }
+        .tiptext .tip-row { display: flex; gap: 8px; align-items: center; }
+        .tiptext .met { color: #22c55e; }
+        .tiptext .not-met { color: #6b7280; }
+        .tiptext .penalty { color: #ef4444; }
+        .ticker-card { background: #161922; border: 1px solid #282d3e; border-radius: 10px; padding: 20px; margin-bottom: 12px; }
+        .ticker-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 10px; }
+        .ticker-card .detail-line { font-size: 15px; color: #94a3b8; margin: 4px 0; }
+        .ticker-card .criteria-item { font-size: 14px; margin: 3px 0; }
+        .legend-box { background: #161922; border: 1px solid #282d3e; border-radius: 10px; padding: 16px 20px; }
+        .legend-title { font-size: 16px; font-weight: 700; color: #e2e8f0; margin-bottom: 8px; }
+        .legend-item { font-size: 14px; color: #94a3b8; margin: 4px 0; }
+        .ohlcv-legend { position: absolute; top: 8px; left: 12px; z-index: 20; font-size: 12px; color: #94a3b8; pointer-events: none; font-family: 'Inter', system-ui, monospace; }
+        .ohlcv-legend span { margin-right: 10px; }
+        .chart-wrap { position: relative; }
+        .screenshot-btn { background: #282d3e; border: 1px solid #3b4260; border-radius: 6px; color: #94a3b8; padding: 4px 10px; font-size: 12px; cursor: pointer; transition: background 0.15s; }
+        .screenshot-btn:hover { background: #3b4260; color: #e2e8f0; }
+        th .tiptext { display: none !important; }
+        #th-tip-floater { position: fixed; z-index: 9999; display: none; background: #1e2231; border: 1px solid #3b4260; border-radius: 8px; padding: 9px 13px; font-size: 12px; line-height: 1.55; color: #cbd5e1; box-shadow: 0 8px 24px rgba(0,0,0,0.5); max-width: 340px; white-space: normal; pointer-events: none; }
+        .ci { display: inline-block; transition: transform 0.2s; }
+        .ci.rotated { transform: rotate(-90deg); }
+        .legend-box-sm { background: #161922; border: 1px solid #282d3e; border-radius: 8px; padding: 11px 15px; }
+        .legend-box-sm .legend-title { font-size: 13px; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 7px; }
+        .legend-box-sm .legend-item { font-size: 13px; color: #64748b; margin: 3px 0; }
+        .param-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 0 16px; }
+        .param-row { display: flex; gap: 8px; padding: 5px 0; border-bottom: 1px solid #1e2231; font-size: 13px; align-items: baseline; }
+        .param-name { color: #94a3b8; font-weight: 600; min-width: 82px; flex-shrink: 0; }
+        .param-desc { color: #64748b; line-height: 1.45; }
+        .analysis-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 12px; }
+        .analysis-card { background: #161922; border: 1px solid #282d3e; border-radius: 10px; padding: 14px 16px; }
+        .analysis-card-hdr { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 7px; }
+        .analysis-card-title { font-size: 16px; font-weight: 700; }
+        .analysis-kv { display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; margin-top: 7px; font-size: 13px; }
+        .analysis-kv .k { color: #64748b; white-space: nowrap; }
+        .analysis-kv .v { color: #cbd5e1; }
+        .analysis-action { margin-top: 10px; padding-top: 10px; border-top: 1px solid #282d3e; font-size: 14px; font-weight: 600; }
+        .analysis-criteria { margin-top: 8px; font-size: 13px; }
+        .analysis-criteria .crit-section { margin-top: 6px; }
+        .analysis-criteria .crit-label { font-size: 12px; font-weight: 600; color: #64748b; margin-bottom: 4px; }
+        .analysis-criteria .crit-met   { color: #22c55e; margin: 2px 0; }
+        .analysis-criteria .crit-miss  { color: #64748b; margin: 2px 0; }
+        .analysis-criteria .crit-wait  { color: #eab308; margin: 2px 0; }
+        .overlay { position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; }
+        .overlay-card { background: #161922; border: 1px solid #282d3e; border-radius: 16px; padding: 32px 40px; max-width: 560px; width: 90%; max-height: 90vh; overflow-y: auto; }
+        .overlay-card h2 { font-size: 24px; font-weight: 700; color: #e2e8f0; margin-bottom: 8px; }
+        .overlay-card p { font-size: 14px; color: #94a3b8; margin-bottom: 20px; }
+        .overlay-card label { display: block; font-size: 14px; font-weight: 600; color: #cbd5e1; margin-bottom: 6px; }
+        .overlay-card input, .overlay-card textarea { width: 100%; background: #0f1117; border: 1px solid #3b4260; border-radius: 8px; padding: 10px 14px; color: #e2e8f0; font-size: 14px; margin-bottom: 16px; outline: none; transition: border-color 0.15s; }
+        .overlay-card input:focus, .overlay-card textarea:focus { border-color: #3b82f6; }
+        .overlay-card .api-hint { font-size: 12px; color: #64748b; margin-top: -12px; margin-bottom: 14px; }
+        .btn-primary { background: #3b82f6; color: white; border: none; border-radius: 8px; padding: 10px 24px; font-size: 15px; font-weight: 600; cursor: pointer; transition: background 0.15s; }
+        .btn-primary:hover { background: #2563eb; }
+        .btn-secondary { background: #282d3e; color: #94a3b8; border: 1px solid #3b4260; border-radius: 8px; padding: 10px 24px; font-size: 15px; font-weight: 600; cursor: pointer; transition: background 0.15s; }
+        .btn-secondary:hover { background: #3b4260; color: #e2e8f0; }
+        .spinner { border: 3px solid #282d3e; border-top: 3px solid #3b82f6; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 16px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        #cache-banner { background: #1e2231; border-bottom: 1px solid #3b4260; color: #94a3b8; font-size: 13px; text-align: center; padding: 6px 16px; }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body class="dark min-h-screen">
+    <div id="setup-overlay" class="overlay hidden">
+        <div class="overlay-card">
+            <h2>📊 Stock Market Dashboard</h2>
+            <p>Enter your API keys to get started. Both are required — Finnhub for live quotes &amp; fundamentals, Twelve Data for OHLCV history.</p>
+            <label for="setup-finnhub-key">Finnhub API Key</label>
+            <input type="text" id="setup-finnhub-key" placeholder="pk_xxxxxxxxxxxxxxxxxxxx">
+            <div class="api-hint">Free tier: 60 req/min · <a href="https://finnhub.io/" target="_blank" style="color:#3b82f6;">finnhub.io</a></div>
+            <label for="setup-twelve-key">Twelve Data API Key</label>
+            <input type="text" id="setup-twelve-key" placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
+            <div class="api-hint">Free tier: 8 req/min, 800 credits/day · <a href="https://twelvedata.com/" target="_blank" style="color:#3b82f6;">twelvedata.com</a></div>
+            <label for="setup-tickers">Watchlist (comma-separated, max 12)</label>
+            <input type="text" id="setup-tickers" placeholder="TSLA, HOOD, SOFI, AMZN, SKM, GOOGL" value="TSLA, HOOD, SOFI, AMZN, SKM, GOOGL">
+            <div class="flex gap-3 mt-2">
+                <button class="btn-primary" onclick="UI.saveInitialSetup()">Launch Dashboard</button>
+            </div>
+        </div>
+    </div>
+    <div id="settings-overlay" class="overlay hidden">
+        <div class="overlay-card">
+            <h2>⚙️ Settings</h2>
+            <p>Update your API keys and watchlist. Changes clear the cache and trigger a full refresh.</p>
+            <label for="finnhub-key-input">Finnhub API Key</label>
+            <input type="text" id="finnhub-key-input" placeholder="pk_xxxxxxxxxxxxxxxxxxxx">
+            <label for="twelve-key-input">Twelve Data API Key</label>
+            <input type="text" id="twelve-key-input" placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
+            <label for="tickers-input">Watchlist (comma-separated, max 12)</label>
+            <input type="text" id="tickers-input" placeholder="TSLA, HOOD, SOFI, AMZN, SKM, GOOGL">
+            <div class="flex gap-3 mt-2">
+                <button class="btn-primary" onclick="UI.saveSettings()">Save &amp; Refresh</button>
+                <button class="btn-secondary" onclick="UI.hideSettings()">Cancel</button>
+            </div>
+        </div>
+    </div>
+    <div id="loading-section" class="hidden" style="padding-top: 20vh; text-align: center;">
+        <div class="spinner"></div>
+        <p class="text-lg text-gray-300 font-semibold" id="loading-message">Loading data...</p>
+        <p class="text-sm text-gray-500 mt-2" id="loading-progress"></p>
+    </div>
+    <div id="dashboard-content" class="hidden">
+        <div id="cache-banner" class="hidden"></div>
+        <header class="border-b border-gray-800 px-6 py-4">
+            <div class="flex items-center justify-between max-w-[1600px] mx-auto">
+                <div>
+                    <h1 class="text-2xl font-bold text-white">📊 Stock Market Dashboard</h1>
+                    <p class="text-base text-gray-400 mt-0.5" id="header-timestamp"></p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <a href="https://finance.yahoo.com/quote/%5EVIX" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="padding:6px 14px; font-size:13px; text-decoration:none;">📈 VIX ↗</a>
+                    <a href="https://edition.cnn.com/markets/fear-and-greed" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="padding:6px 14px; font-size:13px; text-decoration:none;">🧠 Fear &amp; Greed ↗</a>
+                    <span class="text-sm text-gray-500" id="ticker-count"></span>
+                    <button class="btn-secondary" style="padding:6px 14px; font-size:13px;" onclick="App.refreshData()">↻ Refresh</button>
+                    <button class="btn-secondary" style="padding:6px 14px; font-size:13px;" onclick="UI.showSettings()">⚙ Settings</button>
+                    <span class="px-3 py-1 bg-surface-700 rounded text-sm text-gray-300">v3.2.5</span>
+                </div>
+            </div>
+        </header>
+        <main class="px-4 py-4 max-w-[1600px] mx-auto">
+            <div class="rounded-lg border border-gray-800 bg-surface-800">
+                <table class="text-sm"><thead><tr class="text-gray-400 bg-surface-900"><th class="px-3 py-3 text-left font-medium bg-surface-900">Symbol</th><th class="px-3 py-3 text-right font-medium bg-surface-900"><span class="tip tip-down">Price<span class="tiptext">Current market price</span></span></th><th class="px-3 py-3 text-right font-medium bg-surface-900"><span class="tip tip-down">1D%<span class="tiptext">Daily % change</span></span></th><th class="px-3 py-3 text-center font-medium bg-surface-900"><span class="tip tip-down">Score<span class="tiptext">Composite score 0–100</span></span></th><th class="px-3 py-3 text-center font-medium bg-surface-900"><span class="tip tip-down">Setup<span class="tiptext">LONG / SHORT / WAIT signal</span></span></th><th class="px-3 py-3 text-right font-medium bg-surface-900"><span class="tip tip-down">RSI<span class="tiptext">RSI 14-day</span></span></th><th class="px-3 py-3 text-center font-medium bg-surface-900"><span class="tip tip-down">Trend<span class="tiptext">EMA50 vs EMA200</span></span></th><th class="px-3 py-3 text-center font-medium bg-surface-900"><span class="tip tip-down">Structure<span class="tiptext">HH/HL vs LH/LL</span></span></th><th class="px-3 py-3 text-center font-medium bg-surface-900"><span class="tip tip-down">Earn<span class="tiptext">Days to earnings</span></span></th><th class="px-3 py-3 text-center font-medium bg-surface-900"><span class="tip tip-down">Rating<span class="tiptext">Analyst consensus</span></span></th></tr></thead><tbody id="table-body"></tbody></table>
+            </div>
+            <div class="mt-4 rounded-lg border border-gray-800 bg-surface-800">
+                <div class="px-4 py-2.5 border-b border-gray-800 bg-surface-900/70"><span class="text-sm font-semibold text-gray-400 uppercase tracking-wider">Technical &amp; Fundamental Details</span></div>
+                <div style="overflow-x: auto;"><table class="text-sm" style="min-width: 1700px;"><thead><tr class="text-gray-500 bg-surface-900"><th class="px-2 py-2.5 text-left font-medium bg-surface-900">Symbol</th><th class="px-2 py-2.5 text-right font-medium bg-surface-900">ATR%</th><th class="px-2 py-2.5 text-right font-medium bg-surface-900">EMA50</th><th class="px-2 py-2.5 text-right font-medium bg-surface-900">EMA200</th><th class="px-2 py-2.5 text-right font-medium bg-surface-900">AVWAP30d</th><th class="px-2 py-2.5 text-right font-medium bg-surface-900">POC14d</th><th class="px-2 py-2.5 text-right font-medium bg-surface-900">ADX</th><th class="px-2 py-2.5 text-right font-medium bg-surface-900">BB-BW</th><th class="px-2 py-2.5 text-center font-medium bg-surface-900">Sweep</th><th class="px-2 py-2.5 text-center font-medium bg-surface-900">FVG</th><th class="px-2 py-2.5 text-center font-medium bg-surface-900">Fib-Pos</th><th class="px-2 py-2.5 text-right font-medium bg-surface-900">Vol/Avg</th><th class="px-2 py-2.5 text-right font-medium bg-surface-900">52W%</th><th class="px-2 py-2.5 text-right font-medium bg-surface-900">RS-SPY</th><th class="px-2 py-2.5 text-right font-medium bg-surface-900">P/E</th><th class="px-2 py-2.5 text-right font-medium bg-surface-900">Fwd P/E</th><th class="px-2 py-2.5 text-right font-medium bg-surface-900">EPS-G</th><th class="px-2 py-2.5 text-right font-medium bg-surface-900">Short Ratio</th><th class="px-2 py-2.5 text-right font-medium bg-surface-900">Beta</th><th class="px-2 py-2.5 text-center font-medium bg-surface-900">MACD</th><th class="px-2 py-2.5 text-center font-medium bg-surface-900">OBV</th><th class="px-2 py-2.5 text-center font-medium bg-surface-900">R1 / S1</th><th class="px-2 py-2.5 text-right font-medium bg-surface-900">Target↑%</th><th class="px-2 py-2.5 text-left font-medium bg-surface-900">Analyst Action</th></tr></thead><tbody id="detail-table-body"></tbody></table></div>
+            </div>
+            <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div class="legend-box-sm"><div class="legend-title">🎨 Color Legend</div><div class="legend-item"><span class="text-accent-green font-semibold">Green</span> = Bullish · Oversold · Buy</div><div class="legend-item"><span class="text-accent-red font-semibold">Red</span> = Bearish · Overbought · Sell</div><div class="legend-item"><span class="text-accent-yellow font-semibold">Yellow</span> = Neutral · Caution · Hold</div><div class="legend-item mt-1"><span class="text-green-400 font-semibold">70–100</span> = Strong &nbsp;|&nbsp; <span class="text-yellow-400 font-semibold">40–69</span> = Marginal &nbsp;|&nbsp; <span class="text-red-400 font-semibold">0–39</span> = Avoid</div></div>
+                <div class="legend-box-sm"><div class="legend-title">📐 Quick Reference</div><div class="legend-item">RSI &lt;30 = Oversold &nbsp;|&nbsp; &gt;70 = Overbought</div><div class="legend-item">ADX &gt;30 = Strong trend &nbsp;|&nbsp; &lt;20 = Ranging</div><div class="legend-item">Earnings &lt;7d = Danger &nbsp;|&nbsp; &gt;21d = Safe</div><div class="legend-item">Short Ratio &gt;5d = Elevated &nbsp;|&nbsp; &gt;10d = Squeeze</div></div>
+                <div class="legend-box-sm"><div class="legend-title">📊 Setup Guide</div><div class="legend-item">LONG/SHORT = 4+ criteria met → 60% size</div><div class="legend-item">5+ criteria met → 100% size</div><div class="legend-item">OBV UP + Price UP = confirmed momentum</div></div>
+            </div>
+            <div class="mt-3"><button class="legend-box-sm flex items-center gap-2 w-full text-left cursor-pointer" onclick="this.nextElementSibling.classList.toggle('hidden');this.querySelector('.ci').classList.toggle('rotated')"><span class="ci">▼</span><span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">📖 Parameters Glossary</span></button><div class="hidden mt-2 legend-box-sm"><div class="param-grid"><div class="param-row"><span class="param-name">Score</span><span class="param-desc">Composite 0–100 from 15+ criteria</span></div><div class="param-row"><span class="param-name">RSI</span><span class="param-desc">14-day momentum. &lt;30 oversold, &gt;70 overbought</span></div><div class="param-row"><span class="param-name">ADX</span><span class="param-desc">Trend strength. &gt;30 strong, &lt;20 ranging</span></div><div class="param-row"><span class="param-name">BB-BW</span><span class="param-desc">Bollinger squeeze → explosive move pending</span></div><div class="param-row"><span class="param-name">FVG</span><span class="param-desc">Fair Value Gap — price imbalance zone</span></div><div class="param-row"><span class="param-name">AVWAP30d</span><span class="param-desc">Institutional volume-weighted average price</span></div><div class="param-row"><span class="param-name">RS-SPY</span><span class="param-desc">&gt;1.05 outperforming. &lt;0.95 lagging market</span></div><div class="param-row"><span class="param-name">OBV</span><span class="param-desc">UP = accumulation. DOWN = distribution</span></div></div></div></div>
+            <div class="mt-3"><button class="legend-box-sm flex items-center gap-2 w-full text-left cursor-pointer" onclick="this.nextElementSibling.classList.toggle('hidden');this.querySelector('.ci').classList.toggle('rotated')"><span class="ci">▼</span><span class="text-sm font-bold text-white">Analysis per Ticker</span></button><div class="mt-3" id="analysis-section"><div id="summary-container" class="analysis-grid"></div></div></div>
+        </main>
+        <footer class="border-t border-gray-800 px-6 py-3 mt-4"><div class="flex items-center justify-between max-w-[1600px] mx-auto text-sm text-gray-500"><span>Sources: Finnhub (quotes, fundamentals) · Twelve Data (OHLCV)</span><span>All technical indicators calculated client-side</span></div></footer>
+    </div>
+    <script src="js/config.js?v=3.2.0"></script>
+    <script src="js/api.js?v=3.2.3"></script>
+    <script src="js/technicals.js?v=3.2.0"></script>
+    <script src="js/structure.js?v=3.2.0"></script>
+    <script src="js/scoring.js?v=3.2.1"></script>
+    <script src="js/charts.js?v=3.2.0"></script>
+    <script src="js/ui.js?v=3.2.8"></script>
+    <script src="js/app.js?v=3.2.3"></script>
+    <script>
+    (function () {
+        const floater = document.createElement('div');
+        floater.id = 'th-tip-floater';
+        document.body.appendChild(floater);
+        function showFloater(tipEl, anchorEl) {
+            floater.innerHTML = tipEl.innerHTML;
+            floater.style.display = 'block';
+            const r = anchorEl.getBoundingClientRect();
+            const fw = floater.offsetWidth;
+            const fh = floater.offsetHeight;
+            let left = r.left + r.width / 2 - fw / 2;
+            let top  = r.bottom + 6;
+            left = Math.max(6, Math.min(left, window.innerWidth - fw - 6));
+            if (top + fh > window.innerHeight - 6) top = r.top - fh - 6;
+            floater.style.left = left + 'px';
+            floater.style.top  = top  + 'px';
+        }
+        function attachHeaderTips() {
+            document.querySelectorAll('th .tip').forEach(tip => {
+                if (tip._thTipBound) return;
+                tip._thTipBound = true;
+                const tiptext = tip.querySelector('.tiptext');
+                if (!tiptext) return;
+                tip.addEventListener('mouseenter', () => showFloater(tiptext, tip));
+                tip.addEventListener('mouseleave', () => { floater.style.display = 'none'; });
+            });
+        }
+        document.addEventListener('DOMContentLoaded', attachHeaderTips);
+        window.addEventListener('load', () => setTimeout(attachHeaderTips, 500));
+    })();
+    </script>
+</body>
+</html>

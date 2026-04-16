@@ -1,0 +1,9 @@
+.env
+.env.local
+*.env
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+.claude/
+*_PLAN.md
