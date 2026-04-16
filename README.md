@@ -29,7 +29,7 @@ Live data from Financial Modeling Prep Stable API. All calculations happen in yo
 1. Fork this repo
 2. Connect to [Cloudflare Pages](https://pages.cloudflare.com/)
 3. Set build output to `/` — done, no build step needed
-4. Add your API keys → live
+4. Add your FMP API key → live
 
 ### Run Locally
 ```bash
@@ -39,7 +39,7 @@ python -m http.server 8080
 # Or Node.js
 npx serve .
 ```
-Open `http://localhost:8080` → enter API keys → analyze
+Open `http://localhost:8080` → enter API key → analyze
 
 ### GitHub Pages
 Fork → Settings → Pages → Source: main/root folder → live
@@ -48,14 +48,14 @@ Fork → Settings → Pages → Source: main/root folder → live
 
 ## 📖 How to Use
 
-### 1️⃣ Add Your API Keys
+### 1️⃣ Add Your API Key
 - Click **Settings** (top right)
-- Enter your **Finnhub** key (free tier: 60 req/min) and **Twelve Data** key (free: 8 req/min)
-- Keys stored in browser localStorage only — never sent to any server except the APIs directly
+- Enter your [FMP API key](https://site.financialmodelingprep.com/)
+- Free tier works — just verify stable endpoints support
 
 ### 2️⃣ Watch Your Tickers
 - Default: TSLA, HOOD, SOFI, AMZN, SKM, GOOGL
-- Edit watchlist in Settings (max 12 tickers)
+- Edit watchlist in Settings
 - Click **Refresh** for live data
 
 ### 3️⃣ Read the Signals
@@ -64,7 +64,7 @@ Each ticker shows:
 - **Setup**: LONG / SHORT / WAIT with entry signals
 - **RSI, Trend, Structure**: Quick momentum reads
 - **Earnings**: Days until earnings (avoid trading through)
-- **Rating**: Buy/Hold/Sell based on analyst consensus
+- **Rating**: Buy/Hold/Sell based on consensus
 
 ### 4️⃣ Expand Charts
 - Click ticker row → full candlestick chart
@@ -80,12 +80,12 @@ Each ticker shows:
 - RSI, ATR, EMA 50/200, AVWAP (multiple anchors)
 - Point of Control (POC), ADX, Bollinger Bandwidth
 - Fibonacci retracements, Market structure, Sweeps, FVGs
-- MACD, OBV, Pivot Points (R1/S1)
 - Relative strength vs SPY
 
-**From APIs:**
-- Finnhub: live quotes, fundamentals, earnings dates, analyst ratings
-- Twelve Data: 2 years OHLCV history
+**From FMP Stable API:**
+- Price data (2 years OHLCV)
+- P/E, Beta, Earnings dates
+- EPS growth, Short float, Analyst ratings
 
 **Scoring System:**
 - **Technical** (50 pts): Structure, RSI, EMAs, AVWAP, Fib levels
@@ -97,20 +97,18 @@ Each ticker shows:
 
 ## 🔑 Setup
 
-### Get Your API Keys
+### Get Your FMP API Key
+1. Sign up: [financialmodelingprep.com](https://site.financialmodelingprep.com/)
+2. Get free API key (no credit card needed)
+3. Verify it supports **stable endpoints** (`/stable/`)
+4. Enter in dashboard Settings
 
-**Finnhub** (quotes, fundamentals, analyst data):
-1. Sign up: [finnhub.io](https://finnhub.io/)
-2. Free tier: 60 req/min — no credit card needed
-
-**Twelve Data** (OHLCV history):
-1. Sign up: [twelvedata.com](https://twelvedata.com/)
-2. Free tier: 8 req/min, 800 credits/day
+**Privacy**: Key stored in your browser localStorage only. Never sent anywhere except FMP API.
 
 ### Change Default Tickers
 Edit `js/config.js`:
 ```javascript
-DEFAULT_TICKERS: ['AAPL', 'MSFT', 'NVDA'],  // your tickers
+const DEFAULT_TICKERS = ['AAPL', 'MSFT', 'NVDA'];  // your tickers
 ```
 
 ---
@@ -120,17 +118,26 @@ DEFAULT_TICKERS: ['AAPL', 'MSFT', 'NVDA'],  // your tickers
 ```
 ├── index.html           Main dashboard (single page)
 ├── js/
-│   ├── config.js       Parameters + localStorage helpers
-│   ├── api.js          Finnhub + Twelve Data fetching
-│   ├── technicals.js   20+ indicators (RSI, ATR, EMA, MACD...)
-│   ├── structure.js    Market structure, sweeps, FVG
-│   ├── scoring.js      Composite score + LONG/SHORT/WAIT signals
-│   ├── charts.js       Lightweight Charts rendering
-│   └── ui.js           DOM + tooltips + summaries
-└── .github/workflows/deploy.yml  Auto-deploy to GitHub Pages
+│   ├── api.js          FMP Stable API calls
+│   ├── technicals.js   20+ indicators
+│   ├── scoring.js      Composite score + signals
+│   ├── charts.js       Lightweight Charts render
+│   └── ui.js           DOM + tooltips
+└── README.md
 ```
 
 **Zero dependencies.** Tailwind & Lightweight Charts loaded from CDN.
+
+---
+
+## 📊 API Usage
+
+~44 requests per refresh (6 tickers + SPY benchmark):
+- Historical OHLCV data
+- Fundamentals (P/E, earnings, EPS)
+- Analyst consensus, short float
+
+All non-critical requests fail gracefully — dashboard loads with available data.
 
 ---
 
@@ -144,6 +151,17 @@ DEFAULT_TICKERS: ['AAPL', 'MSFT', 'NVDA'],  // your tickers
 
 ---
 
+## 📋 What's New (v3.2.5)
+
+- ✅ Migrated to FMP Stable API (`/stable/` endpoints)
+- ✅ API key validation before loading
+- ✅ 15-second timeout per request
+- ✅ Graceful error handling + retry buttons
+- ✅ Rate limit detection (HTTP 429)
+- ✅ ARCHITECTURE.md documentation
+
+---
+
 ## ⚠️ Disclaimer
 
 **Educational & research purposes only.** Not financial advice. Trading carries risk. Consult a qualified advisor before investing.
@@ -153,3 +171,11 @@ DEFAULT_TICKERS: ['AAPL', 'MSFT', 'NVDA'],  // your tickers
 ## 📄 License
 
 MIT License. Use, modify, share freely.
+
+---
+
+## 🤝 Questions?
+
+Check `ARCHITECTURE.md` for technical deep dive. Or file an issue on GitHub.
+
+**Happy trading.** 📈
