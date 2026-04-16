@@ -35,6 +35,7 @@
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #161922; }
         ::-webkit-scrollbar-thumb { background: #3b4260; border-radius: 4px; }
+
         .tip { position: relative; cursor: help; }
         .tip .tiptext {
             visibility: hidden; opacity: 0;
@@ -53,31 +54,85 @@
         .tiptext .met { color: #22c55e; }
         .tiptext .not-met { color: #6b7280; }
         .tiptext .penalty { color: #ef4444; }
-        .ticker-card { background: #161922; border: 1px solid #282d3e; border-radius: 10px; padding: 20px; margin-bottom: 12px; }
+
+        .ticker-card {
+            background: #161922; border: 1px solid #282d3e; border-radius: 10px;
+            padding: 20px; margin-bottom: 12px;
+        }
         .ticker-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 10px; }
         .ticker-card .detail-line { font-size: 15px; color: #94a3b8; margin: 4px 0; }
         .ticker-card .criteria-item { font-size: 14px; margin: 3px 0; }
-        .legend-box { background: #161922; border: 1px solid #282d3e; border-radius: 10px; padding: 16px 20px; }
+
+        .legend-box {
+            background: #161922; border: 1px solid #282d3e; border-radius: 10px;
+            padding: 16px 20px;
+        }
         .legend-title { font-size: 16px; font-weight: 700; color: #e2e8f0; margin-bottom: 8px; }
         .legend-item { font-size: 14px; color: #94a3b8; margin: 4px 0; }
-        .ohlcv-legend { position: absolute; top: 8px; left: 12px; z-index: 20; font-size: 12px; color: #94a3b8; pointer-events: none; font-family: 'Inter', system-ui, monospace; }
+
+        .ohlcv-legend {
+            position: absolute; top: 8px; left: 12px; z-index: 20;
+            font-size: 12px; color: #94a3b8; pointer-events: none;
+            font-family: 'Inter', system-ui, monospace;
+        }
         .ohlcv-legend span { margin-right: 10px; }
         .chart-wrap { position: relative; }
-        .screenshot-btn { background: #282d3e; border: 1px solid #3b4260; border-radius: 6px; color: #94a3b8; padding: 4px 10px; font-size: 12px; cursor: pointer; transition: background 0.15s; }
+
+        .screenshot-btn {
+            background: #282d3e; border: 1px solid #3b4260; border-radius: 6px;
+            color: #94a3b8; padding: 4px 10px; font-size: 12px; cursor: pointer;
+            transition: background 0.15s;
+        }
         .screenshot-btn:hover { background: #3b4260; color: #e2e8f0; }
+
+        /* ── Header tooltips — rendered by JS floater (position:fixed)
+           This bypasses overflow-x:auto clipping on the detail table.
+           The native .tiptext inside <th> is hidden; JS copies its content. */
         th .tiptext { display: none !important; }
-        #th-tip-floater { position: fixed; z-index: 9999; display: none; background: #1e2231; border: 1px solid #3b4260; border-radius: 8px; padding: 9px 13px; font-size: 12px; line-height: 1.55; color: #cbd5e1; box-shadow: 0 8px 24px rgba(0,0,0,0.5); max-width: 340px; white-space: normal; pointer-events: none; }
+        /* Shared floater styles (JS sets position) */
+        #th-tip-floater {
+            position: fixed; z-index: 9999; display: none;
+            background: #1e2231; border: 1px solid #3b4260; border-radius: 8px;
+            padding: 9px 13px; font-size: 12px; line-height: 1.55;
+            color: #cbd5e1; box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            max-width: 340px; white-space: normal; pointer-events: none;
+        }
         .ci { display: inline-block; transition: transform 0.2s; }
         .ci.rotated { transform: rotate(-90deg); }
-        .legend-box-sm { background: #161922; border: 1px solid #282d3e; border-radius: 8px; padding: 11px 15px; }
-        .legend-box-sm .legend-title { font-size: 13px; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 7px; }
+
+        /* ── Compact legend boxes ─────────────────────────────── */
+        .legend-box-sm {
+            background: #161922; border: 1px solid #282d3e; border-radius: 8px;
+            padding: 11px 15px;
+        }
+        .legend-box-sm .legend-title {
+            font-size: 13px; font-weight: 600; color: #94a3b8;
+            text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 7px;
+        }
         .legend-box-sm .legend-item { font-size: 13px; color: #64748b; margin: 3px 0; }
-        .param-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 0 16px; }
-        .param-row { display: flex; gap: 8px; padding: 5px 0; border-bottom: 1px solid #1e2231; font-size: 13px; align-items: baseline; }
+
+        /* ── Parameters Glossary grid ─────────────────────────── */
+        .param-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+            gap: 0 16px;
+        }
+        .param-row {
+            display: flex; gap: 8px; padding: 5px 0;
+            border-bottom: 1px solid #1e2231; font-size: 13px; align-items: baseline;
+        }
         .param-name { color: #94a3b8; font-weight: 600; min-width: 82px; flex-shrink: 0; }
         .param-desc { color: #64748b; line-height: 1.45; }
-        .analysis-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 12px; }
-        .analysis-card { background: #161922; border: 1px solid #282d3e; border-radius: 10px; padding: 14px 16px; }
+
+        /* ── Analysis per Ticker — compact grid cards ─────────── */
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 12px;
+        }
+        .analysis-card {
+            background: #161922; border: 1px solid #282d3e; border-radius: 10px; padding: 14px 16px;
+        }
         .analysis-card-hdr { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 7px; }
         .analysis-card-title { font-size: 16px; font-weight: 700; }
         .analysis-kv { display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; margin-top: 7px; font-size: 13px; }
@@ -90,65 +145,119 @@
         .analysis-criteria .crit-met   { color: #22c55e; margin: 2px 0; }
         .analysis-criteria .crit-miss  { color: #64748b; margin: 2px 0; }
         .analysis-criteria .crit-wait  { color: #eab308; margin: 2px 0; }
-        .overlay { position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; }
-        .overlay-card { background: #161922; border: 1px solid #282d3e; border-radius: 16px; padding: 32px 40px; max-width: 560px; width: 90%; max-height: 90vh; overflow-y: auto; }
+
+        /* ── Setup & Settings overlays */
+        .overlay {
+            position: fixed; inset: 0; z-index: 100;
+            background: rgba(0,0,0,0.85);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .overlay-card {
+            background: #161922; border: 1px solid #282d3e; border-radius: 16px;
+            padding: 32px 40px; max-width: 560px; width: 90%;
+            max-height: 90vh; overflow-y: auto;
+        }
         .overlay-card h2 { font-size: 24px; font-weight: 700; color: #e2e8f0; margin-bottom: 8px; }
         .overlay-card p { font-size: 14px; color: #94a3b8; margin-bottom: 20px; }
         .overlay-card label { display: block; font-size: 14px; font-weight: 600; color: #cbd5e1; margin-bottom: 6px; }
-        .overlay-card input, .overlay-card textarea { width: 100%; background: #0f1117; border: 1px solid #3b4260; border-radius: 8px; padding: 10px 14px; color: #e2e8f0; font-size: 14px; margin-bottom: 16px; outline: none; transition: border-color 0.15s; }
+        .overlay-card input, .overlay-card textarea {
+            width: 100%; background: #0f1117; border: 1px solid #3b4260; border-radius: 8px;
+            padding: 10px 14px; color: #e2e8f0; font-size: 14px; margin-bottom: 16px;
+            outline: none; transition: border-color 0.15s;
+        }
         .overlay-card input:focus, .overlay-card textarea:focus { border-color: #3b82f6; }
         .overlay-card .api-hint { font-size: 12px; color: #64748b; margin-top: -12px; margin-bottom: 14px; }
-        .btn-primary { background: #3b82f6; color: white; border: none; border-radius: 8px; padding: 10px 24px; font-size: 15px; font-weight: 600; cursor: pointer; transition: background 0.15s; }
+        .btn-primary {
+            background: #3b82f6; color: white; border: none; border-radius: 8px;
+            padding: 10px 24px; font-size: 15px; font-weight: 600; cursor: pointer;
+            transition: background 0.15s;
+        }
         .btn-primary:hover { background: #2563eb; }
-        .btn-secondary { background: #282d3e; color: #94a3b8; border: 1px solid #3b4260; border-radius: 8px; padding: 10px 24px; font-size: 15px; font-weight: 600; cursor: pointer; transition: background 0.15s; }
+        .btn-secondary {
+            background: #282d3e; color: #94a3b8; border: 1px solid #3b4260; border-radius: 8px;
+            padding: 10px 24px; font-size: 15px; font-weight: 600; cursor: pointer;
+            transition: background 0.15s;
+        }
         .btn-secondary:hover { background: #3b4260; color: #e2e8f0; }
-        .spinner { border: 3px solid #282d3e; border-top: 3px solid #3b82f6; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 16px; }
+
+        /* Loading spinner */
+        .spinner {
+            border: 3px solid #282d3e; border-top: 3px solid #3b82f6;
+            border-radius: 50%; width: 40px; height: 40px;
+            animation: spin 1s linear infinite; margin: 0 auto 16px;
+        }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        #cache-banner { background: #1e2231; border-bottom: 1px solid #3b4260; color: #94a3b8; font-size: 13px; text-align: center; padding: 6px 16px; }
+
+        /* Cache banner */
+        #cache-banner {
+            background: #1e2231; border-bottom: 1px solid #3b4260;
+            color: #94a3b8; font-size: 13px; text-align: center; padding: 6px 16px;
+        }
+
         .hidden { display: none !important; }
     </style>
 </head>
 <body class="dark min-h-screen">
+
+    <!-- INITIAL SETUP OVERLAY -->
     <div id="setup-overlay" class="overlay hidden">
         <div class="overlay-card">
             <h2>📊 Stock Market Dashboard</h2>
-            <p>Enter your API keys to get started. Both are required — Finnhub for live quotes &amp; fundamentals, Twelve Data for OHLCV history.</p>
+            <p>Enter your API keys to get started. Both are required — Finnhub for live quotes & fundamentals, Twelve Data for OHLCV history.</p>
+
             <label for="setup-finnhub-key">Finnhub API Key</label>
             <input type="text" id="setup-finnhub-key" placeholder="pk_xxxxxxxxxxxxxxxxxxxx">
             <div class="api-hint">Free tier: 60 req/min · <a href="https://finnhub.io/" target="_blank" style="color:#3b82f6;">finnhub.io</a></div>
+
             <label for="setup-twelve-key">Twelve Data API Key</label>
             <input type="text" id="setup-twelve-key" placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
             <div class="api-hint">Free tier: 8 req/min, 800 credits/day · <a href="https://twelvedata.com/" target="_blank" style="color:#3b82f6;">twelvedata.com</a></div>
+
             <label for="setup-tickers">Watchlist (comma-separated, max 12)</label>
             <input type="text" id="setup-tickers" placeholder="TSLA, HOOD, SOFI, AMZN, SKM, GOOGL" value="TSLA, HOOD, SOFI, AMZN, SKM, GOOGL">
+
             <div class="flex gap-3 mt-2">
                 <button class="btn-primary" onclick="UI.saveInitialSetup()">Launch Dashboard</button>
             </div>
         </div>
     </div>
+
+    <!-- SETTINGS OVERLAY -->
     <div id="settings-overlay" class="overlay hidden">
         <div class="overlay-card">
             <h2>⚙️ Settings</h2>
             <p>Update your API keys and watchlist. Changes clear the cache and trigger a full refresh.</p>
+
             <label for="finnhub-key-input">Finnhub API Key</label>
             <input type="text" id="finnhub-key-input" placeholder="pk_xxxxxxxxxxxxxxxxxxxx">
+
             <label for="twelve-key-input">Twelve Data API Key</label>
             <input type="text" id="twelve-key-input" placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
+
             <label for="tickers-input">Watchlist (comma-separated, max 12)</label>
             <input type="text" id="tickers-input" placeholder="TSLA, HOOD, SOFI, AMZN, SKM, GOOGL">
+
             <div class="flex gap-3 mt-2">
-                <button class="btn-primary" onclick="UI.saveSettings()">Save &amp; Refresh</button>
+                <button class="btn-primary" onclick="UI.saveSettings()">Save & Refresh</button>
                 <button class="btn-secondary" onclick="UI.hideSettings()">Cancel</button>
             </div>
         </div>
     </div>
+
+    <!-- LOADING -->
     <div id="loading-section" class="hidden" style="padding-top: 20vh; text-align: center;">
         <div class="spinner"></div>
         <p class="text-lg text-gray-300 font-semibold" id="loading-message">Loading data...</p>
         <p class="text-sm text-gray-500 mt-2" id="loading-progress"></p>
     </div>
+
+    <!-- DASHBOARD -->
     <div id="dashboard-content" class="hidden">
+
+        <!-- CACHE BANNER -->
         <div id="cache-banner" class="hidden"></div>
+
+        <!-- HEADER -->
         <header class="border-b border-gray-800 px-6 py-4">
             <div class="flex items-center justify-between max-w-[1600px] mx-auto">
                 <div>
@@ -156,8 +265,12 @@
                     <p class="text-base text-gray-400 mt-0.5" id="header-timestamp"></p>
                 </div>
                 <div class="flex items-center gap-3">
-                    <a href="https://finance.yahoo.com/quote/%5EVIX" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="padding:6px 14px; font-size:13px; text-decoration:none;">📈 VIX ↗</a>
-                    <a href="https://edition.cnn.com/markets/fear-and-greed" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="padding:6px 14px; font-size:13px; text-decoration:none;">🧠 Fear &amp; Greed ↗</a>
+                    <a href="https://finance.yahoo.com/quote/%5EVIX" target="_blank" rel="noopener noreferrer"
+                       class="btn-secondary" style="padding:6px 14px; font-size:13px; text-decoration:none;"
+                       title="CBOE VIX Volatility Index — opens Yahoo Finance in new tab">📈 VIX ↗</a>
+                    <a href="https://edition.cnn.com/markets/fear-and-greed" target="_blank" rel="noopener noreferrer"
+                       class="btn-secondary" style="padding:6px 14px; font-size:13px; text-decoration:none;"
+                       title="CNN Fear &amp; Greed Index — opens in new tab">🧠 Fear &amp; Greed ↗</a>
                     <span class="text-sm text-gray-500" id="ticker-count"></span>
                     <button class="btn-secondary" style="padding:6px 14px; font-size:13px;" onclick="App.refreshData()">↻ Refresh</button>
                     <button class="btn-secondary" style="padding:6px 14px; font-size:13px;" onclick="UI.showSettings()">⚙ Settings</button>
@@ -165,24 +278,173 @@
                 </div>
             </div>
         </header>
+
+        <!-- MAIN CONTENT -->
         <main class="px-4 py-4 max-w-[1600px] mx-auto">
+            <!-- PRIMARY TABLE -->
             <div class="rounded-lg border border-gray-800 bg-surface-800">
-                <table class="text-sm"><thead><tr class="text-gray-400 bg-surface-900"><th class="px-3 py-3 text-left font-medium bg-surface-900">Symbol</th><th class="px-3 py-3 text-right font-medium bg-surface-900"><span class="tip tip-down">Price<span class="tiptext">Current market price</span></span></th><th class="px-3 py-3 text-right font-medium bg-surface-900"><span class="tip tip-down">1D%<span class="tiptext">Daily % change</span></span></th><th class="px-3 py-3 text-center font-medium bg-surface-900"><span class="tip tip-down">Score<span class="tiptext">Composite score 0–100</span></span></th><th class="px-3 py-3 text-center font-medium bg-surface-900"><span class="tip tip-down">Setup<span class="tiptext">LONG / SHORT / WAIT signal</span></span></th><th class="px-3 py-3 text-right font-medium bg-surface-900"><span class="tip tip-down">RSI<span class="tiptext">RSI 14-day</span></span></th><th class="px-3 py-3 text-center font-medium bg-surface-900"><span class="tip tip-down">Trend<span class="tiptext">EMA50 vs EMA200</span></span></th><th class="px-3 py-3 text-center font-medium bg-surface-900"><span class="tip tip-down">Structure<span class="tiptext">HH/HL vs LH/LL</span></span></th><th class="px-3 py-3 text-center font-medium bg-surface-900"><span class="tip tip-down">Earn<span class="tiptext">Days to earnings</span></span></th><th class="px-3 py-3 text-center font-medium bg-surface-900"><span class="tip tip-down">Rating<span class="tiptext">Analyst consensus</span></span></th></tr></thead><tbody id="table-body"></tbody></table>
+                <table class="text-sm">
+                    <thead>
+                        <tr class="text-gray-400 bg-surface-900">
+                            <th class="px-3 py-3 text-left font-medium bg-surface-900">Symbol</th>
+                            <th class="px-3 py-3 text-right font-medium bg-surface-900"><span class="tip tip-down">Price<span class="tiptext">Current market price ($). Finnhub live quote; falls back to last OHLCV close if unavailable.</span></span></th>
+                            <th class="px-3 py-3 text-right font-medium bg-surface-900"><span class="tip tip-down">1D%<span class="tiptext">Price change today vs. previous close (%). From Finnhub real-time quote (dp field).</span></span></th>
+                            <th class="px-3 py-3 text-center font-medium bg-surface-900"><span class="tip tip-down">Score<span class="tiptext">Composite score 0–100 combining 15+ technical &amp; fundamental criteria. ≥70 = Strong setup · 40–69 = Marginal · &lt;40 = Avoid. Hover the badge for full breakdown.</span></span></th>
+                            <th class="px-3 py-3 text-center font-medium bg-surface-900"><span class="tip tip-down">Setup<span class="tiptext">Trade setup classification. LONG / SHORT / WAIT. 4 criteria met = 60% sizing, 5+ criteria = 100% sizing. Hover badge for criteria detail.</span></span></th>
+                            <th class="px-3 py-3 text-right font-medium bg-surface-900"><span class="tip tip-down">RSI<span class="tiptext">Relative Strength Index — 14-day momentum oscillator. &lt;30 = Oversold (entry zone) · 30–45 = Entry zone · 45–55 = Neutral · &gt;70 = Overbought (exit/avoid).</span></span></th>
+                            <th class="px-3 py-3 text-center font-medium bg-surface-900"><span class="tip tip-down">Trend<span class="tiptext">EMA50 vs EMA200 relationship. Bullish = price above both + EMA50 &gt; EMA200. Bearish = below both. Neutral = mixed signal.</span></span></th>
+                            <th class="px-3 py-3 text-center font-medium bg-surface-900"><span class="tip tip-down">Structure<span class="tiptext">Market structure. Bullish = Higher Highs + Higher Lows. Bearish = Lower Highs + Lower Lows. Based on 14-bar pivot analysis.</span></span></th>
+                            <th class="px-3 py-3 text-center font-medium bg-surface-900"><span class="tip tip-down">Earn<span class="tiptext">Days until next earnings report. &lt;7d = High risk — avoid new entries · 7–21d = Caution · &gt;21d = Safe window to enter.</span></span></th>
+                            <th class="px-3 py-3 text-center font-medium bg-surface-900"><span class="tip tip-down">Rating<span class="tiptext">Analyst consensus from Finnhub. Majority-wins: Buy / Hold / Sell based on strongBuy+buy vs strongSell+sell counts.</span></span></th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body"></tbody>
+                </table>
             </div>
+
+            <!-- SECONDARY TABLE -->
             <div class="mt-4 rounded-lg border border-gray-800 bg-surface-800">
-                <div class="px-4 py-2.5 border-b border-gray-800 bg-surface-900/70"><span class="text-sm font-semibold text-gray-400 uppercase tracking-wider">Technical &amp; Fundamental Details</span></div>
-                <div style="overflow-x: auto;"><table class="text-sm" style="min-width: 1700px;"><thead><tr class="text-gray-500 bg-surface-900"><th class="px-2 py-2.5 text-left font-medium bg-surface-900">Symbol</th><th class="px-2 py-2.5 text-right font-medium bg-surface-900">ATR%</th><th class="px-2 py-2.5 text-right font-medium bg-surface-900">EMA50</th><th class="px-2 py-2.5 text-right font-medium bg-surface-900">EMA200</th><th class="px-2 py-2.5 text-right font-medium bg-surface-900">AVWAP30d</th><th class="px-2 py-2.5 text-right font-medium bg-surface-900">POC14d</th><th class="px-2 py-2.5 text-right font-medium bg-surface-900">ADX</th><th class="px-2 py-2.5 text-right font-medium bg-surface-900">BB-BW</th><th class="px-2 py-2.5 text-center font-medium bg-surface-900">Sweep</th><th class="px-2 py-2.5 text-center font-medium bg-surface-900">FVG</th><th class="px-2 py-2.5 text-center font-medium bg-surface-900">Fib-Pos</th><th class="px-2 py-2.5 text-right font-medium bg-surface-900">Vol/Avg</th><th class="px-2 py-2.5 text-right font-medium bg-surface-900">52W%</th><th class="px-2 py-2.5 text-right font-medium bg-surface-900">RS-SPY</th><th class="px-2 py-2.5 text-right font-medium bg-surface-900">P/E</th><th class="px-2 py-2.5 text-right font-medium bg-surface-900">Fwd P/E</th><th class="px-2 py-2.5 text-right font-medium bg-surface-900">EPS-G</th><th class="px-2 py-2.5 text-right font-medium bg-surface-900">Short Ratio</th><th class="px-2 py-2.5 text-right font-medium bg-surface-900">Beta</th><th class="px-2 py-2.5 text-center font-medium bg-surface-900">MACD</th><th class="px-2 py-2.5 text-center font-medium bg-surface-900">OBV</th><th class="px-2 py-2.5 text-center font-medium bg-surface-900">R1 / S1</th><th class="px-2 py-2.5 text-right font-medium bg-surface-900">Target↑%</th><th class="px-2 py-2.5 text-left font-medium bg-surface-900">Analyst Action</th></tr></thead><tbody id="detail-table-body"></tbody></table></div>
+                <div class="px-4 py-2.5 border-b border-gray-800 bg-surface-900/70">
+                    <span class="text-sm font-semibold text-gray-400 uppercase tracking-wider">Technical & Fundamental Details</span>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="text-sm" style="min-width: 1700px;">
+                        <thead>
+                            <tr class="text-gray-500 bg-surface-900">
+                                <th class="px-2 py-2.5 text-left font-medium bg-surface-900">Symbol</th>
+                                <th class="px-2 py-2.5 text-right font-medium bg-surface-900"><span class="tip tip-down">ATR%<span class="tiptext">Average True Range as % of price (14-day). Measures daily volatility. &gt;5% = Extreme · &gt;3% = High · &lt;3% = Normal. Use for stop-loss sizing.</span></span></th>
+                                <th class="px-2 py-2.5 text-right font-medium bg-surface-900"><span class="tip tip-down">EMA50<span class="tiptext">50-day Exponential Moving Average. Short-term trend indicator. Acts as dynamic support in uptrends and resistance in downtrends.</span></span></th>
+                                <th class="px-2 py-2.5 text-right font-medium bg-surface-900"><span class="tip tip-down">EMA200<span class="tiptext">200-day EMA — the long-term trend baseline. Price above = bull regime. Golden Cross (EMA50 crosses above EMA200) = major bullish signal.</span></span></th>
+                                <th class="px-2 py-2.5 text-right font-medium bg-surface-900"><span class="tip tip-down">AVWAP30d<span class="tiptext">Anchored VWAP over last 30 trading days. Volume-weighted average price — key institutional reference level. Price above = bullish bias.</span></span></th>
+                                <th class="px-2 py-2.5 text-right font-medium bg-surface-900"><span class="tip tip-down">POC14d<span class="tiptext">Point of Control — price level with highest traded volume over 14 days. Acts as a price magnet; often revisited after moving away.</span></span></th>
+                                <th class="px-2 py-2.5 text-right font-medium bg-surface-900"><span class="tip tip-down">ADX<span class="tiptext">Average Directional Index (14-day). Measures trend strength, NOT direction. &gt;30 = Strong trend · 20–30 = Developing · &lt;20 = Ranging/choppy market.</span></span></th>
+                                <th class="px-2 py-2.5 text-right font-medium bg-surface-900"><span class="tip tip-down">BB-BW<span class="tiptext">Bollinger Bands Bandwidth. Measures how tight the bands are relative to price. Very low = Squeeze (explosive move pending). High = Already expanded.</span></span></th>
+                                <th class="px-2 py-2.5 text-center font-medium bg-surface-900"><span class="tip tip-down">Sweep<span class="tiptext">Liquidity Sweep. BUY_SWP = Lows swept then reclaimed (smart money absorbed sellers — bullish reversal signal). SELL_SWP = Highs swept then rejected.</span></span></th>
+                                <th class="px-2 py-2.5 text-center font-medium bg-surface-900"><span class="tip tip-down">FVG<span class="tiptext">Fair Value Gap — price imbalance left by a 3-candle move. BULL = bullish gap (acts as support), BEAR = bearish gap (resistance). Fill% = how much of the gap has been covered.</span></span></th>
+                                <th class="px-2 py-2.5 text-center font-medium bg-surface-900"><span class="tip tip-down">Fib-Pos<span class="tiptext">Fibonacci retracement position within the 126-day swing high/low. Shows where price sits in the retracement. 38.2–61.8% = golden zone (best entries).</span></span></th>
+                                <th class="px-2 py-2.5 text-right font-medium bg-surface-900"><span class="tip tip-down">Vol/Avg<span class="tiptext">Today's volume vs 20-day average. 1x = normal. &gt;2x = Elevated interest. &gt;3x = Institutional-level activity (breakout confirmation).</span></span></th>
+                                <th class="px-2 py-2.5 text-right font-medium bg-surface-900"><span class="tip tip-down">52W%<span class="tiptext">Position within 52-week High–Low range. 100% = at yearly high. 0% = at yearly low. Above 80% = near highs (momentum). Below 20% = near lows (value).</span></span></th>
+                                <th class="px-2 py-2.5 text-right font-medium bg-surface-900"><span class="tip tip-down">RS-SPY<span class="tiptext">30-day Relative Strength vs SPY (S&amp;P 500). &gt;1.05 = Outperforming market (green). &lt;0.95 = Underperforming (red). 1.0 = Moving exactly like SPY.</span></span></th>
+                                <th class="px-2 py-2.5 text-right font-medium bg-surface-900"><span class="tip tip-down">P/E<span class="tiptext">Trailing Price/Earnings ratio (TTM — Trailing Twelve Months). Lower = potentially cheaper relative to earnings. Needs sector context.</span></span></th>
+                                <th class="px-2 py-2.5 text-right font-medium bg-surface-900"><span class="tip tip-down">Fwd P/E<span class="tiptext">Forward P/E using consensus estimated next-year earnings. Lower than P/E = earnings growth expected. Higher = growth slowdown priced in.</span></span></th>
+                                <th class="px-2 py-2.5 text-right font-medium bg-surface-900"><span class="tip tip-down">EPS-G<span class="tiptext">EPS (Earnings Per Share) Growth Year-over-Year. Measures earnings acceleration. Positive = growing profits. Negative = earnings declining.</span></span></th>
+                                <th class="px-2 py-2.5 text-right font-medium bg-surface-900"><span class="tip tip-down">Short Ratio<span class="tiptext">Days-to-cover short interest. Time needed to cover all short positions at avg daily volume. &gt;5d = Elevated · &gt;10d = Short squeeze territory.</span></span></th>
+                                <th class="px-2 py-2.5 text-right font-medium bg-surface-900"><span class="tip tip-down">Beta<span class="tiptext">Price sensitivity vs S&amp;P 500. &gt;1 = Amplified market moves (higher risk/reward). &lt;1 = Muted moves (more defensive). 1.0 = Moves with market.</span></span></th>
+                                <th class="px-2 py-2.5 text-center font-medium bg-surface-900"><span class="tip tip-down">MACD<span class="tiptext">MACD (12,26,9). ↑ = Bullish crossover (MACD line crossed above signal — buy signal). ↓ = Bearish crossover. Number = MACD line value. Color = histogram direction.</span></span></th>
+                                <th class="px-2 py-2.5 text-center font-medium bg-surface-900"><span class="tip tip-down">OBV<span class="tiptext">On-Balance Volume trend (20-day regression). UP = Volume confirms price rise (accumulation — smart money buying). DOWN = Distribution. FLAT = no conviction.</span></span></th>
+                                <th class="px-2 py-2.5 text-center font-medium bg-surface-900"><span class="tip tip-down">R1 / S1<span class="tiptext">Daily Pivot Points. R1 (red) = First resistance level above pivot. S1 (green) = First support level below pivot. Calculated from previous day's High, Low, Close.</span></span></th>
+                                <th class="px-2 py-2.5 text-right font-medium bg-surface-900"><span class="tip tip-down">Target↑%<span class="tiptext">Analyst consensus price target upside %. Positive = analyst target is above current price. &gt;15% = Significant upside potential according to Wall Street.</span></span></th>
+                                <th class="px-2 py-2.5 text-left font-medium bg-surface-900"><span class="tip tip-down">Analyst Action<span class="tiptext">Latest analyst upgrade or downgrade action. Format: Firm name + action direction + grade assigned. Most recent event from Finnhub data.</span></span></th>
+                            </tr>
+                        </thead>
+                        <tbody id="detail-table-body"></tbody>
+                    </table>
+                </div>
             </div>
+
+            <!-- LEGEND ROW — 3 compact boxes -->
             <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-3">
-                <div class="legend-box-sm"><div class="legend-title">🎨 Color Legend</div><div class="legend-item"><span class="text-accent-green font-semibold">Green</span> = Bullish · Oversold · Buy</div><div class="legend-item"><span class="text-accent-red font-semibold">Red</span> = Bearish · Overbought · Sell</div><div class="legend-item"><span class="text-accent-yellow font-semibold">Yellow</span> = Neutral · Caution · Hold</div><div class="legend-item mt-1"><span class="text-green-400 font-semibold">70–100</span> = Strong &nbsp;|&nbsp; <span class="text-yellow-400 font-semibold">40–69</span> = Marginal &nbsp;|&nbsp; <span class="text-red-400 font-semibold">0–39</span> = Avoid</div></div>
-                <div class="legend-box-sm"><div class="legend-title">📐 Quick Reference</div><div class="legend-item">RSI &lt;30 = Oversold &nbsp;|&nbsp; &gt;70 = Overbought</div><div class="legend-item">ADX &gt;30 = Strong trend &nbsp;|&nbsp; &lt;20 = Ranging</div><div class="legend-item">Earnings &lt;7d = Danger &nbsp;|&nbsp; &gt;21d = Safe</div><div class="legend-item">Short Ratio &gt;5d = Elevated &nbsp;|&nbsp; &gt;10d = Squeeze</div></div>
-                <div class="legend-box-sm"><div class="legend-title">📊 Setup Guide</div><div class="legend-item">LONG/SHORT = 4+ criteria met → 60% size</div><div class="legend-item">5+ criteria met → 100% size</div><div class="legend-item">OBV UP + Price UP = confirmed momentum</div></div>
+                <div class="legend-box-sm">
+                    <div class="legend-title">🎨 Color Legend</div>
+                    <div class="legend-item"><span class="text-accent-green font-semibold">Green</span> = Bullish · Oversold · Buy · Outperform</div>
+                    <div class="legend-item"><span class="text-accent-red font-semibold">Red</span> = Bearish · Overbought · Sell · Underperform</div>
+                    <div class="legend-item"><span class="text-accent-yellow font-semibold">Yellow</span> = Neutral · Caution · Hold</div>
+                    <div class="legend-item mt-1">
+                        <span class="text-green-400 font-semibold">70–100</span> = Strong &nbsp;|&nbsp;
+                        <span class="text-yellow-400 font-semibold">40–69</span> = Marginal &nbsp;|&nbsp;
+                        <span class="text-red-400 font-semibold">0–39</span> = Avoid
+                    </div>
+                </div>
+                <div class="legend-box-sm">
+                    <div class="legend-title">📐 Quick Reference</div>
+                    <div class="legend-item">RSI &lt;30 = Oversold entry &nbsp;|&nbsp; &gt;70 = Overbought exit</div>
+                    <div class="legend-item">ADX &gt;30 = Strong trend &nbsp;|&nbsp; &lt;20 = Ranging</div>
+                    <div class="legend-item">Earnings &lt;7d = Danger zone &nbsp;|&nbsp; &gt;21d = Safe</div>
+                    <div class="legend-item">RS-SPY &gt;1.0 = Outperforming market</div>
+                    <div class="legend-item">Short Ratio &gt;5d = Elevated &nbsp;|&nbsp; &gt;10d = Squeeze</div>
+                    <div class="legend-item">VIX &lt;15 = Low fear &nbsp;|&nbsp; &gt;30 = High fear</div>
+                </div>
+                <div class="legend-box-sm">
+                    <div class="legend-title">📊 Setup Guide</div>
+                    <div class="legend-item">LONG/SHORT = 4+ criteria met → 60% position size</div>
+                    <div class="legend-item">5+ criteria met → 100% position size</div>
+                    <div class="legend-item">BB-BW squeeze + ADX rising = move incoming</div>
+                    <div class="legend-item">OBV UP + Price UP = confirmed momentum</div>
+                    <div class="legend-item">Vol/Avg &gt;3x = institutional breakout activity</div>
+                    <div class="legend-item">FVG = unfilled imbalance acts as price magnet</div>
+                </div>
             </div>
-            <div class="mt-3"><button class="legend-box-sm flex items-center gap-2 w-full text-left cursor-pointer" onclick="this.nextElementSibling.classList.toggle('hidden');this.querySelector('.ci').classList.toggle('rotated')"><span class="ci">▼</span><span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">📖 Parameters Glossary</span></button><div class="hidden mt-2 legend-box-sm"><div class="param-grid"><div class="param-row"><span class="param-name">Score</span><span class="param-desc">Composite 0–100 from 15+ criteria</span></div><div class="param-row"><span class="param-name">RSI</span><span class="param-desc">14-day momentum. &lt;30 oversold, &gt;70 overbought</span></div><div class="param-row"><span class="param-name">ADX</span><span class="param-desc">Trend strength. &gt;30 strong, &lt;20 ranging</span></div><div class="param-row"><span class="param-name">BB-BW</span><span class="param-desc">Bollinger squeeze → explosive move pending</span></div><div class="param-row"><span class="param-name">FVG</span><span class="param-desc">Fair Value Gap — price imbalance zone</span></div><div class="param-row"><span class="param-name">AVWAP30d</span><span class="param-desc">Institutional volume-weighted average price</span></div><div class="param-row"><span class="param-name">RS-SPY</span><span class="param-desc">&gt;1.05 outperforming. &lt;0.95 lagging market</span></div><div class="param-row"><span class="param-name">OBV</span><span class="param-desc">UP = accumulation. DOWN = distribution</span></div></div></div></div>
-            <div class="mt-3"><button class="legend-box-sm flex items-center gap-2 w-full text-left cursor-pointer" onclick="this.nextElementSibling.classList.toggle('hidden');this.querySelector('.ci').classList.toggle('rotated')"><span class="ci">▼</span><span class="text-sm font-bold text-white">Analysis per Ticker</span></button><div class="mt-3" id="analysis-section"><div id="summary-container" class="analysis-grid"></div></div></div>
+
+            <!-- PARAMETERS GLOSSARY — collapsible -->
+            <div class="mt-3">
+                <button class="legend-box-sm flex items-center gap-2 w-full text-left cursor-pointer hover:border-gray-600 transition-colors"
+                        onclick="this.nextElementSibling.classList.toggle('hidden');this.querySelector('.ci').classList.toggle('rotated')">
+                    <span class="ci">▼</span>
+                    <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">📖 Parameters Glossary</span>
+                    <span class="text-xs text-gray-600 ml-1">— click to expand/collapse</span>
+                </button>
+                <div class="hidden mt-2 legend-box-sm">
+                    <div class="param-grid">
+                        <div class="param-row"><span class="param-name">Price</span><span class="param-desc">Live market price. Finnhub real-time; OHLCV last close as fallback.</span></div>
+                        <div class="param-row"><span class="param-name">1D%</span><span class="param-desc">Daily % change vs previous close. From Finnhub live quote.</span></div>
+                        <div class="param-row"><span class="param-name">Score</span><span class="param-desc">Composite 0–100 score from 15+ technical &amp; fundamental criteria.</span></div>
+                        <div class="param-row"><span class="param-name">Setup</span><span class="param-desc">LONG / SHORT / WAIT. 4+ criteria = 60% size. 5+ = 100% size.</span></div>
+                        <div class="param-row"><span class="param-name">RSI</span><span class="param-desc">14-day momentum oscillator. &lt;30 oversold, &gt;70 overbought.</span></div>
+                        <div class="param-row"><span class="param-name">Trend</span><span class="param-desc">EMA50 vs EMA200 + price position. Bullish / Bearish / Neutral.</span></div>
+                        <div class="param-row"><span class="param-name">Structure</span><span class="param-desc">HH+HL = Bullish. LH+LL = Bearish. 14-bar pivot swing analysis.</span></div>
+                        <div class="param-row"><span class="param-name">Earn</span><span class="param-desc">Days to next earnings. &lt;7d = High risk. 7–21d = Caution. &gt;21d = Safe.</span></div>
+                        <div class="param-row"><span class="param-name">Rating</span><span class="param-desc">Analyst consensus: Buy / Hold / Sell from recommendation counts.</span></div>
+                        <div class="param-row"><span class="param-name">ATR%</span><span class="param-desc">Average True Range as % of price (14d). Daily volatility. Use for SL sizing.</span></div>
+                        <div class="param-row"><span class="param-name">EMA50</span><span class="param-desc">50-day Exponential MA. Short-term dynamic support/resistance.</span></div>
+                        <div class="param-row"><span class="param-name">EMA200</span><span class="param-desc">200-day EMA. Bull/bear market dividing line. Golden/Death Cross signal.</span></div>
+                        <div class="param-row"><span class="param-name">AVWAP30d</span><span class="param-desc">Anchored VWAP over 30 trading days. Institutional reference price.</span></div>
+                        <div class="param-row"><span class="param-name">POC14d</span><span class="param-desc">Price with highest traded volume (14d). Acts as price magnet level.</span></div>
+                        <div class="param-row"><span class="param-name">ADX</span><span class="param-desc">Average Directional Index — trend strength (not direction). &gt;30 strong, &lt;20 ranging.</span></div>
+                        <div class="param-row"><span class="param-name">BB-BW</span><span class="param-desc">Bollinger Band width. Very low = volatility squeeze → explosive move pending.</span></div>
+                        <div class="param-row"><span class="param-name">Sweep</span><span class="param-desc">BUY_SWP = lows swept &amp; reclaimed (bullish). SELL_SWP = highs swept &amp; rejected.</span></div>
+                        <div class="param-row"><span class="param-name">FVG</span><span class="param-desc">Fair Value Gap. Price imbalance zone. BULL = support, BEAR = resistance. Fill% = coverage.</span></div>
+                        <div class="param-row"><span class="param-name">Fib-Pos</span><span class="param-desc">Fibonacci position in 126d swing. 38.2–61.8% = golden retracement zone.</span></div>
+                        <div class="param-row"><span class="param-name">Vol/Avg</span><span class="param-desc">Volume vs 20d average. &gt;2x unusual. &gt;3x = institutional activity.</span></div>
+                        <div class="param-row"><span class="param-name">52W%</span><span class="param-desc">Position in 52-week range. 100% = yearly high. 0% = yearly low.</span></div>
+                        <div class="param-row"><span class="param-name">RS-SPY</span><span class="param-desc">30d strength vs SPY benchmark. &gt;1.05 outperforming. &lt;0.95 lagging.</span></div>
+                        <div class="param-row"><span class="param-name">P/E</span><span class="param-desc">Trailing price/earnings ratio (TTM). Compare within same sector.</span></div>
+                        <div class="param-row"><span class="param-name">Fwd P/E</span><span class="param-desc">Forward P/E on estimated next-year earnings. Lower than P/E = growth expected.</span></div>
+                        <div class="param-row"><span class="param-name">EPS-G</span><span class="param-desc">EPS (Earnings Per Share) growth year-over-year. Positive = growing earnings.</span></div>
+                        <div class="param-row"><span class="param-name">Short Ratio</span><span class="param-desc">Days-to-cover short positions. &gt;5d elevated. &gt;10d = short squeeze territory.</span></div>
+                        <div class="param-row"><span class="param-name">Beta</span><span class="param-desc">Market sensitivity vs S&amp;P 500. &gt;1 amplified moves. &lt;1 more stable.</span></div>
+                        <div class="param-row"><span class="param-name">MACD</span><span class="param-desc">MACD (12,26,9). ↑ bullish crossover. ↓ bearish. Value = MACD line.</span></div>
+                        <div class="param-row"><span class="param-name">OBV</span><span class="param-desc">On-Balance Volume. UP = accumulation. DOWN = distribution. FLAT = no conviction.</span></div>
+                        <div class="param-row"><span class="param-name">R1 / S1</span><span class="param-desc">Daily pivot points. R1 = first resistance (red). S1 = first support (green).</span></div>
+                        <div class="param-row"><span class="param-name">Target↑%</span><span class="param-desc">Analyst consensus price target upside %. &gt;15% = significant Wall Street upside.</span></div>
+                        <div class="param-row"><span class="param-name">Analyst Action</span><span class="param-desc">Latest analyst upgrade/downgrade. Firm name + direction + grade.</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ANALYSIS PER TICKER — collapsible, 3-col compact grid -->
+            <div class="mt-3">
+                <button class="legend-box-sm flex items-center gap-2 w-full text-left cursor-pointer hover:border-gray-600 transition-colors"
+                        onclick="this.nextElementSibling.classList.toggle('hidden');this.querySelector('.ci').classList.toggle('rotated')">
+                    <span class="ci">▼</span>
+                    <span class="text-sm font-bold text-white">Analysis per Ticker</span>
+                    <span class="text-xs text-gray-600 ml-1">— click to expand/collapse</span>
+                </button>
+                <div class="mt-3" id="analysis-section">
+                    <div id="summary-container" class="analysis-grid"></div>
+                </div>
+            </div>
         </main>
-        <footer class="border-t border-gray-800 px-6 py-3 mt-4"><div class="flex items-center justify-between max-w-[1600px] mx-auto text-sm text-gray-500"><span>Sources: Finnhub (quotes, fundamentals) · Twelve Data (OHLCV)</span><span>All technical indicators calculated client-side</span></div></footer>
+
+        <!-- FOOTER -->
+        <footer class="border-t border-gray-800 px-6 py-3 mt-4">
+            <div class="flex items-center justify-between max-w-[1600px] mx-auto text-sm text-gray-500">
+                <span>Sources: Finnhub (quotes, fundamentals) · Twelve Data (OHLCV)</span>
+                <span>All technical indicators calculated client-side</span>
+            </div>
+        </footer>
     </div>
+
+    <!-- Scripts (order matters) -->
     <script src="js/config.js?v=3.2.0"></script>
     <script src="js/api.js?v=3.2.3"></script>
     <script src="js/technicals.js?v=3.2.0"></script>
@@ -191,27 +453,40 @@
     <script src="js/charts.js?v=3.2.0"></script>
     <script src="js/ui.js?v=3.2.8"></script>
     <script src="js/app.js?v=3.2.3"></script>
+
+    <!-- ── Header tooltip floater (position:fixed bypasses overflow clipping) ── -->
     <script>
     (function () {
+        // Create a single shared floater div appended to <body>
         const floater = document.createElement('div');
         floater.id = 'th-tip-floater';
         document.body.appendChild(floater);
+
         function showFloater(tipEl, anchorEl) {
             floater.innerHTML = tipEl.innerHTML;
             floater.style.display = 'block';
+
+            // Position below the anchor (header cell), clamped to viewport
             const r = anchorEl.getBoundingClientRect();
             const fw = floater.offsetWidth;
             const fh = floater.offsetHeight;
             let left = r.left + r.width / 2 - fw / 2;
             let top  = r.bottom + 6;
+
+            // Clamp horizontal
             left = Math.max(6, Math.min(left, window.innerWidth - fw - 6));
+            // Flip above if no room below
             if (top + fh > window.innerHeight - 6) top = r.top - fh - 6;
+
             floater.style.left = left + 'px';
             floater.style.top  = top  + 'px';
         }
+
+        // Attach listeners to all th .tip elements
+        // Runs once on DOMContentLoaded; also re-runs after dashboard renders
         function attachHeaderTips() {
             document.querySelectorAll('th .tip').forEach(tip => {
-                if (tip._thTipBound) return;
+                if (tip._thTipBound) return;          // avoid duplicate listeners
                 tip._thTipBound = true;
                 const tiptext = tip.querySelector('.tiptext');
                 if (!tiptext) return;
@@ -219,7 +494,19 @@
                 tip.addEventListener('mouseleave', () => { floater.style.display = 'none'; });
             });
         }
+
         document.addEventListener('DOMContentLoaded', attachHeaderTips);
+
+        // Re-attach after dashboard renders (renderDashboard adds no new th,
+        // but call it anyway in case of future dynamic tables)
+        const origRender = typeof UI !== 'undefined' ? UI.renderDashboard?.bind(UI) : null;
+        if (origRender) {
+            UI.renderDashboard = function (...args) {
+                origRender(...args);
+                attachHeaderTips();
+            };
+        }
+        // Fallback: also run after a short delay on load
         window.addEventListener('load', () => setTimeout(attachHeaderTips, 500));
     })();
     </script>
